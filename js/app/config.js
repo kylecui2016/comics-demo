@@ -2,14 +2,14 @@ var config = {
 	clientWidth: 750,//可视宽度
 	clientHeight: 1334,//可视高度
 	contentWidth: 750,//内容宽度
-	contentHeight: 6500+1334,//内容高度，6500为scrollTop的值，内容高度应在6500基础上+屏幕高度
+	contentHeight: 8500+1334,//内容高度，6500为scrollTop的值，内容高度应在6500基础上+屏幕高度
 	delay: {//对应容器的绝对Y坐标
 		p0: 0,
         p1: 3200
 	},
-    frameDatas: [{
-        moving: false,
-        moved: false,
+    frameDatas: [{//逐帧动画数组
+        moving: false,//防止逐帧动画多次触发，初始值设置为false
+        moved: false,//防止逐帧动画多次触发，初始值设置为false
         frameStart: 3700,//逐帧动画触发开始的Y坐标
         frameEnd: 3800,//逐帧动画触发结束的Y坐标
         frameVanish: 4000,//逐帧动画所在容器消失的Y坐标
@@ -25,9 +25,9 @@ var config = {
     },{
         moving: false,
         moved: false,
-        frameStart: 4100,//逐帧动画触发开始的Y坐标
-        frameEnd: 4200,//逐帧动画触发结束的Y坐标
-        frameVanish: 4500,//逐帧动画所在容器消失的Y坐标
+        frameStart: 6500,//逐帧动画触发开始的Y坐标
+        frameEnd: 6600,//逐帧动画触发结束的Y坐标
+        frameVanish: 7100,//逐帧动画所在容器消失的Y坐标
         frameContainer: "p1",//逐帧动画所在的容器
         frameImgs: [//逐帧动画的图片资源
             "./images/frame_0.png",
@@ -40,9 +40,9 @@ var config = {
     },{
         moving: false,
         moved: false,
-        frameStart: 4600,//逐帧动画触发开始的Y坐标
-        frameEnd: 4700,//逐帧动画触发结束的Y坐标
-        frameVanish: 5000,//逐帧动画所在容器消失的Y坐标
+        frameStart: 7600,//逐帧动画触发开始的Y坐标
+        frameEnd: 7700,//逐帧动画触发结束的Y坐标
+        frameVanish: 8000,//逐帧动画所在容器消失的Y坐标
         frameContainer: "p1",//逐帧动画所在的容器
         frameImgs: [//逐帧动画的图片资源
             "./images/frame_0.png",
@@ -65,7 +65,7 @@ var config = {
         }, {
             prope: "alpha",
             time: [3800, 3850, 3890, 6000],
-            value: [0, 0, 0]
+            value: [1, 1, 1]
         }]
     }, {
         id: "p0_bg",

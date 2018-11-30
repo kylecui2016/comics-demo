@@ -1,8 +1,8 @@
 /*
 * @Author: lenovo
 * @Date:   2018-11-26 16:38:51
-* @Last Modified by:   lenovo
-* @Last Modified time: 2018-11-29 17:04:33
+* @Last Modified by:   cuikai
+* @Last Modified time: 2018-11-30 14:49:14
 */
 
 /*设置canvas宽高*/
@@ -17,6 +17,7 @@ var stage = new Hilo.Stage({
     width: config.clientWidth,
     height: config.clientHeight
 });
+
 stage.enableDOMEvent(Hilo.event.POINTER_START, true);
 stage.enableDOMEvent(Hilo.event.POINTER_MOVE, true);
 stage.enableDOMEvent(Hilo.event.POINTER_END, true);
@@ -135,6 +136,7 @@ ticker.start();
 	            this.touchend()
 	        });
         }
+
         /* 若元素实例属于某个父元素，将实例添加到父元素下；若元素本身为父元素，则添加到stage */
 	    if(data.parent && data.parent !== "null") {
 	    	obj[data.id].addTo(obj[data.parent]);
@@ -143,42 +145,49 @@ ticker.start();
 	    }
     }
 
-    // if(config.frameDatas && config.frameDatas.length > 0) {
-    //     var currentFrame = config.frameDatas[0];
-    // }
     var currentFrame;
-    var nextFrame;
+    /* 默认当前逐帧动画数据为逐帧动画数组的第一个数据 */
+    if(config.frameDatas && config.frameDatas.length > 0) {
+        currentFrame = config.frameDatas[0];
+    }
 
     /*逐帧动画事件*/
     var frameEvents = {
     	initFrame: function () {//初始化逐帧动画，将逐帧动画逐个添加到frameContainer(逐帧动画容器)
     		obj.frames = [];
-    		for(var i = 0; i < nextFrame.frameImgs.length; i ++) {
+    		for(var i = 0; i < currentFrame.frameImgs.length; i ++) {
     			var img = new Hilo.Bitmap({
     				width: config.clientWidth,
 	        		height: config.clientHeight,
 	        		x: 0,
 	        		y: 0,
 	        		alpha: 0,
-	        		image: nextFrame.frameImgs[i]
-    			}).addTo(obj[nextFrame.frameContainer]);
+	        		image: currentFrame.frameImgs[i]
+    			}).addTo(obj[currentFrame.frameContainer]);
     			obj.frames.push(img);
     		}
     	},
-    	start: function () {//逐帧动画启动
+    	start: function () {//逐帧动画启动函数
 			var i = 0;
     		function doFrame() {
     			if(i > currentFrame.frameImgs.length - 1) {// i大于逐帧动画资源数时，显示最后一张图片
-    				return obj.frames[currentFrame.frameImgs.length - 1].alpha = 1;
+    				obj.frames[currentFrame.frameImgs.length - 1].alpha = 1;
+                    currentFrame.moving = false;
+                    cancelAnimationFrame(doFrame);
+                    return;
     			}
-				for(var j = 0;j < obj.frames.length; j++) {
-    				obj.frames[j].alpha = 0;
-    			}
-				obj.frames[i].alpha = 1;
-				i++;
+                for(var j = 0;j < obj.frames.length; j++) {
+                    obj.frames[j].alpha = 0;
+                }
+                obj.frames[i].alpha = 1;
+                i++;
     			requestAnimationFrame(doFrame);
     		}
-			doFrame();
+            if (!currentFrame.moving && !currentFrame.moved) {//moving和moved两个参数防止逐帧动画多次触发
+                currentFrame.moving = true;
+                currentFrame.moved = true;
+                doFrame();
+            }
     	}
     };
 
@@ -189,17 +198,10 @@ ticker.start();
 
      /* 从frameDatas获取当前逐帧动画数据 */
      var getCurrentFrame = function (scrollTop) {
-        var target=[];
+        var target = [];
         target = config.frameDatas.filter(function (currentValue, index) {
-            return scrollTop > currentValue.frameStart
-        });
-        return target[target.length - 1];
-    }
-    /* 从frameDatas获取下一个逐帧动画数据 */
-    var getNextFrame = function (scrollTop) {
-        var target=[];
-        target = config.frameDatas.filter(function (currentValue, index) {
-            return scrollTop < currentValue.frameStart
+            /* 根据scrollTop与frameData.frameVanish的比较值来获取当前的逐帧动画数据 */
+            return scrollTop < currentValue.frameVanish + 100
         });
         return target[0];
     }
@@ -257,17 +259,16 @@ ticker.start();
         if(config.frameDatas && config.frameDatas.length > 0) {
             for(var z = 0;z < config.frameDatas.length;z ++) {
                 var frameData = config.frameDatas[z];
-                currentFrame = getCurrentFrame(scrollTop);
-                nextFrame = getNextFrame(scrollTop);
+                currentFrame = getCurrentFrame(scrollTop);//获取当前逐帧动画数据
             }
         }
 
         /* 当逐帧动画图片资源及容器存在时，对逐帧动画进行初始化 */
         if(
-            nextFrame &&
-            nextFrame.frameContainer &&
-            nextFrame.frameImgs &&
-            nextFrame.frameImgs.length > 0
+            currentFrame &&
+            currentFrame.frameContainer &&
+            currentFrame.frameImgs &&
+            currentFrame.frameImgs.length > 0
         ) {
             frameEvents.initFrame();
         }
@@ -281,7 +282,7 @@ ticker.start();
         	currentFrame.frameImgs
         ) {
         	if( currentY < currentFrame.frameStart ) {//滚动位置在触发开始点之前，逐帧动画容器隐藏
-                obj[currentFrame.moved] = false;
+                currentFrame.moved = false;
         		obj[currentFrame.frameContainer].alpha = 0;
         	}else if( currentY < currentFrame.frameEnd ) {//滚动位置在触发开始点和结束点之间，逐帧动画容器显示，并触发逐帧动画
         		obj[currentFrame.frameContainer].alpha = 1;
