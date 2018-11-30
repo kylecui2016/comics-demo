@@ -2,7 +2,7 @@ var config = {
 	clientWidth: 750,//可视宽度
 	clientHeight: 1334,//可视高度
 	contentWidth: 750,//内容宽度
-	contentHeight: 8500+1334,//内容高度，6500为scrollTop的值，内容高度应在6500基础上+屏幕高度
+	contentHeight: 8500+1334,//内容高度，8500为scrollTop的值，内容高度应在6500基础上+屏幕高度
 	delay: {//对应容器的绝对Y坐标
 		p0: 0,
         p1: 3200

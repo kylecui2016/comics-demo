@@ -2,7 +2,7 @@
 * @Author: lenovo
 * @Date:   2018-11-26 16:38:51
 * @Last Modified by:   cuikai
-* @Last Modified time: 2018-11-30 14:49:14
+* @Last Modified time: 2018-11-30 17:20:18
 */
 
 /*设置canvas宽高*/
@@ -112,6 +112,7 @@ ticker.start();
         if(data.type == "Graphics" && data.draw) {//type为Graphics时，执行draw方法
         	data.draw.call(obj[data.id]);
         }
+
         /*需要svg时可以指定type为Graphics，并且指定对应的drawSVGPath方法。
 		  格式如下：
 		  drawSVGPath: function (path,beginfill) {
@@ -146,6 +147,7 @@ ticker.start();
     }
 
     var currentFrame;
+
     /* 默认当前逐帧动画数据为逐帧动画数组的第一个数据 */
     if(config.frameDatas && config.frameDatas.length > 0) {
         currentFrame = config.frameDatas[0];
@@ -197,7 +199,7 @@ ticker.start();
     };
 
      /* 从frameDatas获取当前逐帧动画数据 */
-     var getCurrentFrame = function (scrollTop) {
+    var getCurrentFrame = function (scrollTop) {
         var target = [];
         target = config.frameDatas.filter(function (currentValue, index) {
             /* 根据scrollTop与frameData.frameVanish的比较值来获取当前的逐帧动画数据 */
